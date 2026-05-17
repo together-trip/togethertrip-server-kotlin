@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  build-test:
+  pr-build-test:
+    name: PR Build Test
     runs-on: ubuntu-latest
 
     services:
