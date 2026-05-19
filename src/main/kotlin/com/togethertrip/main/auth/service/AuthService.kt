@@ -19,6 +19,7 @@ class AuthService(
     private val oauthAccountRepository: OAuthAccountRepository,
     private val userRepository: UserRepository,
     private val jwtTokenProvider: JwtTokenProvider,
+    private val refreshTokenService: RefreshTokenService,
 ) {
 
     @Transactional
@@ -84,6 +85,11 @@ class AuthService(
         val refreshToken = jwtTokenProvider.createRefreshToken(
             userId = user.id,
             role = user.role,
+        )
+
+        refreshTokenService.save(
+            userId = user.id,
+            refreshToken = refreshToken,
         )
 
         return TokenResponse(
