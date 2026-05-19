@@ -7,6 +7,8 @@ import com.togethertrip.main.auth.dto.OAuthUserInfo
 import com.togethertrip.main.auth.dto.TokenRefreshRequest
 import com.togethertrip.main.auth.dto.TokenResponse
 import com.togethertrip.main.auth.repository.OAuthAccountRepository
+import com.togethertrip.main.global.exception.BusinessException
+import com.togethertrip.main.global.exception.ErrorCode
 import com.togethertrip.main.global.security.jwt.JwtTokenProvider
 import com.togethertrip.main.global.security.jwt.TokenType
 import com.togethertrip.main.user.domain.User
@@ -46,13 +48,13 @@ class AuthService(
     @Transactional(readOnly = true)
     fun refreshToken(request: TokenRefreshRequest): TokenResponse {
         if (!jwtTokenProvider.validateToken(request.refreshToken)) {
-            throw IllegalArgumentException("유효하지 않은 refresh token입니다.")
+            throw BusinessException(ErrorCode.INVALID_REFRESH_TOKEN)
         }
 
         val claims = jwtTokenProvider.getClaims(request.refreshToken)
 
         if (claims.tokenType != TokenType.REFRESH) {
-            throw IllegalArgumentException("Refresh token이 아닙니다.")
+            throw BusinessException(ErrorCode.INVALID_REFRESH_TOKEN)
         }
 
         if (!refreshTokenService.matches(
@@ -60,14 +62,14 @@ class AuthService(
                 refreshToken = request.refreshToken,
             )
         ) {
-            throw IllegalArgumentException("Refresh token이 일치하지 않습니다.")
+            throw BusinessException(ErrorCode.INVALID_REFRESH_TOKEN)
         }
 
         val user = userRepository.findById(claims.userId)
-            .orElseThrow { IllegalArgumentException("사용자를 찾을 수 없습니다.") }
+            .orElseThrow { BusinessException(ErrorCode.USER_NOT_FOUND) }
 
         if (user.status != UserStatus.ACTIVE) {
-            throw IllegalStateException("활성 상태의 사용자가 아닙니다.")
+            throw BusinessException(ErrorCode.INACTIVE_USER)
         }
 
         val accessToken = jwtTokenProvider.createAccessToken(
