@@ -15,7 +15,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:16
+        image: postgis/postgis:17-3.5
         env:
           POSTGRES_DB: together_trip_test
           POSTGRES_USER: together_trip
