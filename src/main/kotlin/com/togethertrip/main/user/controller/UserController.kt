@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "User", description = "사용자 API")
@@ -41,6 +42,14 @@ class UserController(
     @DeleteMapping("/me")
     fun deleteMe(
         @AuthenticationPrincipal authUser: AuthUser,
+    ) {
+    }
+
+    @Operation(summary = "내 여행 참여자 정보 조회", description = "특정 여행에서 현재 사용자의 참여자 정보를 조회합니다.")
+    @GetMapping("/me/trip-participants")
+    fun getMyTripParticipant(
+        @AuthenticationPrincipal authUser: AuthUser,
+        @RequestParam tripId: Long,
     ) {
     }
 }
