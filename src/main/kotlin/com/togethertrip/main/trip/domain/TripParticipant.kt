@@ -10,7 +10,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import java.time.Instant
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "trip_participants")
@@ -31,17 +31,14 @@ class TripParticipant(
     var profileImageUrl: String? = null,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "participant_role", nullable = false, length = 20)
-    var participantRole: TripParticipantRole,
+    @Column(name = "participant_type", nullable = false, length = 20)
+    var participantType: TripParticipantType,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "participant_status", nullable = false, length = 20)
     var participantStatus: TripParticipantStatus,
 
     @Column(name = "joined_at")
-    var joinedAt: Instant? = null,
-
-    @Column(name = "left_at")
-    var leftAt: Instant? = null,
+    var joinedAt: LocalDateTime? = null,
 
 ) : BaseEntity()
